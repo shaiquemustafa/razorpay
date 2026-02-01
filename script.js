@@ -24,6 +24,18 @@ const calculateBmiWithAge = async (height, weight, age) => {
   }
 };
 
+const saveUserData = async (payload) => {
+  try {
+    await fetch("/.netlify/functions/saveUser", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+  } catch (error) {
+    // Ignore save errors so the UI still works.
+  }
+};
+
 calcBtn.addEventListener("click", async () => {
   const height = parseFloat(heightInput.value);
   const name = (nameInput.value || "").trim();
@@ -44,6 +56,16 @@ calcBtn.addEventListener("click", async () => {
     result.textContent = data.error;
     return;
   }
+
+  await saveUserData({
+    name,
+    age,
+    city,
+    height,
+    weight,
+    bmi: data.bmi,
+    ageAdjustedBmi: data.ageAdjustedBmi,
+  });
 
   const niceName =
     name.toLowerCase().startsWith("a") || name.toLowerCase().startsWith("s")
