@@ -1,0 +1,5 @@
+[build]
+  # Use repository root; no build step needed for static files.
+  base = "."
+  publish = "."
+
