@@ -1,4 +1,4 @@
-const { Client } = require("pg");
+const { neon } = require("@netlify/neon");
 
 exports.handler = async (event) => {
   try {
@@ -13,14 +13,9 @@ exports.handler = async (event) => {
       };
     }
 
-    const client = new Client({
-      connectionString: process.env.NEON_DATABASE_URL,
-      ssl: { rejectUnauthorized: false },
-    });
+    const sql = neon();
 
-    await client.connect();
-
-    await client.query(`
+    await sql`
       CREATE TABLE IF NOT EXISTS bmi_users (
         id SERIAL PRIMARY KEY,
         name TEXT,
@@ -32,15 +27,12 @@ exports.handler = async (event) => {
         age_adjusted_bmi NUMERIC,
         created_at TIMESTAMP DEFAULT NOW()
       )
-    `);
+    `;
 
-    await client.query(
-      `INSERT INTO bmi_users (name, age, city, height, weight, bmi, age_adjusted_bmi)
-       VALUES ($1,$2,$3,$4,$5,$6,$7)`,
-      [name || null, age, city || null, height, weight, bmi, ageAdjustedBmi]
-    );
-
-    await client.end();
+    await sql`
+      INSERT INTO bmi_users (name, age, city, height, weight, bmi, age_adjusted_bmi)
+      VALUES (${name || null}, ${age}, ${city || null}, ${height}, ${weight}, ${bmi}, ${ageAdjustedBmi})
+    `;
 
     return { statusCode: 200, body: JSON.stringify({ ok: true }) };
   } catch (error) {
