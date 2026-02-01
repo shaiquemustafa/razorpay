@@ -6,7 +6,7 @@ exports.handler = async (event) => {
       event.body || "{}"
     );
 
-    if (!name || !age || !city || !height || !weight || !bmi || !ageAdjustedBmi) {
+    if (!age || !height || !weight || !bmi || !ageAdjustedBmi) {
       return {
         statusCode: 400,
         body: JSON.stringify({ error: "Invalid input" }),
@@ -37,7 +37,7 @@ exports.handler = async (event) => {
     await client.query(
       `INSERT INTO bmi_users (name, age, city, height, weight, bmi, age_adjusted_bmi)
        VALUES ($1,$2,$3,$4,$5,$6,$7)`,
-      [name, age, city, height, weight, bmi, ageAdjustedBmi]
+      [name || null, age, city || null, height, weight, bmi, ageAdjustedBmi]
     );
 
     await client.end();

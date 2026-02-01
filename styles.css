@@ -43,3 +43,9 @@ button {
   margin-top: 16px;
   font-weight: bold;
 }
+
+.status {
+  margin-top: 8px;
+  color: #2d6a4f;
+  font-size: 14px;
+}
