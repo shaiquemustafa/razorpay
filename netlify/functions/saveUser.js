@@ -44,9 +44,13 @@ exports.handler = async (event) => {
 
     return { statusCode: 200, body: JSON.stringify({ ok: true }) };
   } catch (error) {
+    console.error("SaveUser error:", error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: "DB error" }),
+      body: JSON.stringify({
+        error: "DB error",
+        detail: error && error.message ? error.message : "Unknown error",
+      }),
     };
   }
 };

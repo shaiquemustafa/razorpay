@@ -30,9 +30,13 @@ const saveUserData = async (payload) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
-    return response.ok;
+    if (response.ok) {
+      return { ok: true };
+    }
+    const data = await response.json().catch(() => ({}));
+    return { ok: false, error: data.detail || data.error || "Save failed" };
   } catch (error) {
-    return false;
+    return { ok: false, error: "Network error" };
   }
 };
 
@@ -56,7 +60,7 @@ calcBtn.addEventListener("click", async () => {
     return;
   }
 
-  const saved = await saveUserData({
+  const saveResult = await saveUserData({
     age,
     height,
     weight,
@@ -65,8 +69,11 @@ calcBtn.addEventListener("click", async () => {
   });
 
   result.textContent = `You are ${age} years old. Your BMI is ${data.bmi} (age-adjusted: ${data.ageAdjustedBmi}).`;
-  saveStatus.textContent = saved
-    ? "Saved to database."
-    : "Could not save to database.";
-  saveStatus.style.color = saved ? "#2d6a4f" : "#b00020";
+  if (saveResult.ok) {
+    saveStatus.textContent = "Saved to database.";
+    saveStatus.style.color = "#2d6a4f";
+  } else {
+    saveStatus.textContent = `Could not save to database: ${saveResult.error}`;
+    saveStatus.style.color = "#b00020";
+  }
 });
