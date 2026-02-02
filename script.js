@@ -1,6 +1,9 @@
 const calcBtn = document.getElementById("calcBtn");
 const loginBtn = document.getElementById("loginBtn");
+const logoutBtn = document.getElementById("logoutBtn");
 const authStatus = document.getElementById("authStatus");
+const authGate = document.getElementById("authGate");
+const app = document.getElementById("app");
 const heightInput = document.getElementById("height");
 const ageInput = document.getElementById("age");
 const weightInput = document.getElementById("weight");
@@ -61,9 +64,36 @@ const initAuth = () => {
     return;
   }
 
+  const showApp = () => {
+    authGate.classList.add("hidden");
+    app.classList.remove("hidden");
+  };
+
+  const showGate = () => {
+    authGate.classList.remove("hidden");
+    app.classList.add("hidden");
+  };
+
   loginBtn.addEventListener("click", () =>
     window.netlifyIdentity.open("login")
   );
+
+  logoutBtn.addEventListener("click", () =>
+    window.netlifyIdentity.logout()
+  );
+
+  window.netlifyIdentity.on("init", (user) => {
+    if (user) {
+      authStatus.textContent = `Logged in as ${user.email}.`;
+      authStatus.style.color = "#2d6a4f";
+      showApp();
+    } else {
+      authStatus.textContent = "Please log in to continue.";
+      authStatus.style.color = "#b00020";
+      showGate();
+      window.netlifyIdentity.open("login");
+    }
+  });
 
   window.netlifyIdentity.on("login", async (user) => {
     const saved = await saveAuthUser({
@@ -77,13 +107,18 @@ const initAuth = () => {
       ? `Logged in as ${user.email}.`
       : "Logged in, but could not save user profile.";
     authStatus.style.color = saved ? "#2d6a4f" : "#b00020";
+    showApp();
     window.netlifyIdentity.close();
   });
 
   window.netlifyIdentity.on("logout", () => {
     authStatus.textContent = "Logged out.";
     authStatus.style.color = "#2d6a4f";
+    showGate();
+    window.netlifyIdentity.open("login");
   });
+
+  window.netlifyIdentity.init();
 };
 
 initAuth();
