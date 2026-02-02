@@ -1,4 +1,6 @@
 const calcBtn = document.getElementById("calcBtn");
+const loginBtn = document.getElementById("loginBtn");
+const authStatus = document.getElementById("authStatus");
 const heightInput = document.getElementById("height");
 const ageInput = document.getElementById("age");
 const weightInput = document.getElementById("weight");
@@ -39,6 +41,52 @@ const saveUserData = async (payload) => {
     return { ok: false, error: "Network error" };
   }
 };
+
+const saveAuthUser = async (payload) => {
+  try {
+    const response = await fetch("/.netlify/functions/saveUserAuth", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    return response.ok;
+  } catch (error) {
+    return false;
+  }
+};
+
+const initAuth = () => {
+  if (!window.netlifyIdentity) {
+    authStatus.textContent = "Login unavailable.";
+    return;
+  }
+
+  loginBtn.addEventListener("click", () =>
+    window.netlifyIdentity.open("login")
+  );
+
+  window.netlifyIdentity.on("login", async (user) => {
+    const saved = await saveAuthUser({
+      id: user?.id,
+      email: user?.email,
+      name: user?.user_metadata?.full_name || user?.user_metadata?.name || "",
+      provider: user?.app_metadata?.provider || "google",
+    });
+
+    authStatus.textContent = saved
+      ? `Logged in as ${user.email}.`
+      : "Logged in, but could not save user profile.";
+    authStatus.style.color = saved ? "#2d6a4f" : "#b00020";
+    window.netlifyIdentity.close();
+  });
+
+  window.netlifyIdentity.on("logout", () => {
+    authStatus.textContent = "Logged out.";
+    authStatus.style.color = "#2d6a4f";
+  });
+};
+
+initAuth();
 
 calcBtn.addEventListener("click", async () => {
   const height = parseFloat(heightInput.value);
