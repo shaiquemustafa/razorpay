@@ -58,10 +58,6 @@ button {
   font-size: 14px;
 }
 
-.hidden {
-  display: none;
-}
-
 .auth-gate {
   position: fixed;
   inset: 0;
@@ -70,4 +66,12 @@ button {
   align-items: center;
   justify-content: center;
   z-index: 10;
+}
+
+.hidden {
+  display: none;
+}
+
+.auth-gate.hidden {
+  display: none;
 }
