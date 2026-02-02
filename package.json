@@ -2,7 +2,7 @@
   "name": "bmi-calculator",
   "private": true,
   "dependencies": {
-    "@netlify/neon": "^1.0.0"
+    "@netlify/neon": "latest"
   }
 }
 
