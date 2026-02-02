@@ -16,10 +16,6 @@ body {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.auth-card {
-  width: 360px;
-}
-
 label {
   display: block;
   margin: 12px 0;
@@ -43,10 +39,6 @@ button {
   cursor: pointer;
 }
 
-.secondary {
-  background: #6c757d;
-}
-
 .result {
   margin-top: 16px;
   font-weight: bold;
@@ -58,20 +50,3 @@ button {
   font-size: 14px;
 }
 
-.auth-gate {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.35);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
-}
-
-.hidden {
-  display: none;
-}
-
-.auth-gate.hidden {
-  display: none;
-}
